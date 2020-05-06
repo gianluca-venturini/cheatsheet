@@ -1,0 +1,93 @@
+> Create public/private key:
+
+openssl genrsa -out key.pem 2048
+
+
+> Create public/private key and encrypt with password ufing 3des:
+
+openssl genrsa -des3 -out key.pem 2048
+
+
+> Remove password from a key.pem
+
+openssl rsa -in key_with_password.pem -out key.pem //TO DO: TEST
+
+
+> Create public key starting from public/private key
+
+openssl rsa -in key.pem -pubout -out public.pem
+
+> Create public key in ssh format from private key 
+
+ssh-keygen -f private.pem -y > public.pub
+
+
+> Discover modulus and exponent of a public key
+
+openssl rsa -in public.pem -pubin -inform PEM -text -noout
+
+
+> Discover all information about private/public key
+
+openssl rsa -in key.pem -inform PEM -text -noout
+
+
+> Encript using public (require decrypt using private)
+
+openssl rsautl -encrypt -inkey public.pem -pubin -in plaintext.txt -out ciphertext.enc
+
+
+> Decrypt using private (require encript using public)
+
+openssl rsautl -decrypt -inkey key.pem -in ciphertext.enc -out plaintext.txt
+
+
+> Encript using private (require decrypt using public)
+
+openssl rsautl -sign -inkey key.pem -in plaintext.txt -out ciphertext.enc
+
+
+> Decrypt using public (require decrypt using private)
+
+openssl rsautl -verify -inkey public.pem -pubin -in ciphertext.enc -out plaintext.txt
+
+
+> Create csr (Certifiacte Signing Request)
+
+openssl req -new -key key.pem -out certificate.csr
+
+
+> Self sign a csr, create crt
+
+openssl x509 -req -days 365 -in certificate.csr -signkey private.pem -out certificate.crt
+
+
+> Create directly a self signed certificate
+
+openssl req -x509 -new -nodes -key rootCA.key -days 1024 -out rootCA.crt
+
+
+> Sign a certificate with a ca key
+
+openssl x509 -req -in certificate.csr -CA ca.crt -CAkey ca.pem -CAcreateserial -out certificate.crt -days 500
+
+
+> Display all information in a crt
+
+openssl x509 -in certificate.crt -text -noout
+
+
+> Verify that a certain CA signed a cert
+
+openssl verify -verbose -CAfile ca.crt certificate.crt
+
+
+> Extract public key from a crt
+
+openssl x509 -in certificate.crt -pubkey -out public.pem
+
+
+> SSL create end to end connection
+
+> Convert p12 private key into pem
+openssl pkcs12 -clcerts -nokeys -out out.pem -in in.p12
