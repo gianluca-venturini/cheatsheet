@@ -1,0 +1,9 @@
+# Access Yubikey and unlock private key
+gpg --card-edit
+> verify 
+
+# Encrypt file with GPG key
+gpg -e -o test.txt.gpg -r KEYNAME test.txt
+
+# Decrypt file with GPG key
+gpg -d -o output.txt test.txt.gpg
